@@ -89,9 +89,9 @@ public class Grasp {
 			//Console.log("RESTRIC SIZE " + restrictSize + " SIZE OF LIST " + sortedObjs.size());
 			//Sort random position from residual list
 			int max = instance.getN();
-			int rand = new Random().nextInt(max);
-			j = rand/max * restrictSize;
-			//Console.log("RAND INDEX " + j);
+			double rand = new Random().nextInt(max);
+			double p = rand/max;
+			j = (int) (p * restrictSize);
 			
 			KnapsackObject randObj = sortedObjs.get(j);
 
