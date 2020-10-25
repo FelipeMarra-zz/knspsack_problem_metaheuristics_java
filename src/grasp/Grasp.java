@@ -30,7 +30,7 @@ public class Grasp {
 
 		// Till stopping criteria (max of iterations)
 		for (int i = 0; i < instance.iter_max; i++) {
-
+			Console.log("#######Iteration " + i);
 			// Build partially greedy solution
 			sl = buildGraspSolution();
 			Console.log("built solution: " + instance.calculateFo(sl));
@@ -48,7 +48,6 @@ public class Grasp {
 
 				//update fo
 				bestS.setFo(instance.calculateFo(sl));
-				Console.log("GRASP FOUND A NEW STAR " + bestS.getFo());
 			}
 		}
 		return bestS;
