@@ -33,12 +33,12 @@ public class Grasp {
 
 			// Build partially greedy solution
 			sl = buildGraspSolution();
-			Console.log("solucao construida: " + instance.calculateFo(sl));
+			Console.log("built solution: " + instance.calculateFo(sl));
 
 			//Apply local search to the built solution
 			Solution vndS = new VND().run(sl);
 			sl.setSolution(vndS);
-			Console.log("solucao refinada: " + instance.calculateFo(sl));
+			Console.log("refined solution: " + instance.calculateFo(sl));
 
 			//Update best solution
 			if (instance.calculateFo(sl) > bestS.getFo()) {
@@ -48,6 +48,7 @@ public class Grasp {
 
 				//update fo
 				bestS.setFo(instance.calculateFo(sl));
+				Console.log("GRASP FOUND A NEW STAR " + bestS.getFo());
 			}
 		}
 		return bestS;

@@ -66,7 +66,7 @@ public class VND {
 		if (fo_max > fo_original)
 		{
 			s.changeBit(best_bit);
-			Console.log("Vizinho melhor em N1! FO = " + fo_max);
+			//Console.log("Vizinho melhor em N1! FO = " + fo_max);
 		}
 		return s;
 	}
@@ -116,7 +116,7 @@ public class VND {
 		{
 			s.changeBit(best_bit_1);
 			s.changeBit(best_bit_2);
-			Console.log("Vizinho melhor em N2! FO = " + fo_max);
+			//Console.log("Vizinho melhor em N2! FO = " + fo_max);
 		}
 		return s;
 	}
