@@ -52,6 +52,7 @@ public class Main {
 			break;
 		case 6:
 			Console.log(instance.s_star);
+			Console.log("FO: " + instance.s_star.getFo());
 			break;
 		}
 		}while(choice != 0);
