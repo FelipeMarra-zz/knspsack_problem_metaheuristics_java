@@ -33,6 +33,10 @@ public class Solution {
 		s = newS.getS();
 	}
 	
+	public ArrayList<Integer> getSolution() {
+		return s;
+	}
+	
 	public void add(int i) {
 		if(i == 1 || i == 0) {
 			s.add(i);

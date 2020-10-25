@@ -51,7 +51,7 @@ public class Main {
 			instance.setS(vndS);
 			break;
 		case 6:
-			Console.log(instance.s_star);
+			Console.log(instance.s_star.getSolution());
 			Console.log("FO: " + instance.s_star.getFo());
 			break;
 		}

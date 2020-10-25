@@ -185,6 +185,7 @@ public class Instance {
 		
 		if(s.getFo() > s_star.getFo()) {
 			s_star.setSolution(s);
+			calculateFo(s_star);
 		}
 	}
 
