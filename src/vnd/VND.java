@@ -1,4 +1,4 @@
-package VND;
+package vnd;
 
 import knapsack.Instance;
 import knapsack.Solution;

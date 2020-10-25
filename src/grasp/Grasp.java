@@ -3,11 +3,11 @@ package grasp;
 import java.util.ArrayList;
 import java.util.Random;
 
-import VND.VND;
 import knapsack.Instance;
 import knapsack.KnapsackObject;
 import knapsack.Solution;
 import utils.Console;
+import vnd.VND;
 
 public class Grasp {
 	// Controllers
