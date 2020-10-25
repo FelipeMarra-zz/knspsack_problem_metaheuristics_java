@@ -1,7 +1,8 @@
+
 import grasp.Grasp;
+import knapsack.Instance;
+import knapsack.Solution;
 import utils.Console;
-import utils.Instance;
-import utils.Solution;
 
 public class Main {
 	public static void main(String[] args) {

@@ -1,4 +1,4 @@
-package utils;
+package knapsack;
 
 public class KnapsackObject {
 	public KnapsackObject(double weight, double profit, int id) {

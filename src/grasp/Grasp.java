@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import VND.VND;
+import knapsack.Instance;
+import knapsack.KnapsackObject;
+import knapsack.Solution;
 import utils.Console;
-import utils.Instance;
-import utils.KnapsackObject;
-import utils.Solution;
 
 public class Grasp {
 	// Controllers

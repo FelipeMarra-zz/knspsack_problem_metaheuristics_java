@@ -1,5 +1,4 @@
-package utils;
-
+package knapsack;
 import java.util.ArrayList;
 
 public class Solution {

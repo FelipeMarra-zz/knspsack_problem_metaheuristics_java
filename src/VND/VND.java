@@ -1,8 +1,8 @@
 package VND;
 
+import knapsack.Instance;
+import knapsack.Solution;
 import utils.Console;
-import utils.Instance;
-import utils.Solution;
 
 public class VND {
 	// Controllers
