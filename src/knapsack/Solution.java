@@ -8,6 +8,10 @@ public class Solution {
 		initSolution(solutionSize);
 	}
 	
+	public Solution(Solution s){
+		copySolution(s);
+	}
+	
 	private ArrayList<Integer> s = new ArrayList<Integer>();
 	private double fo;
 	
@@ -15,6 +19,11 @@ public class Solution {
 	private void initSolution(int size) {
 		for(int i = 0; i < size; i++)
 			s.add(0);
+	}
+	
+	private void copySolution(Solution cpyS) {
+		s = new ArrayList<Integer>(cpyS.getS());
+		fo = cpyS.getFo();
 	}
 
 	public Integer getIndex(int index) {
