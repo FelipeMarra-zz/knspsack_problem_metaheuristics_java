@@ -31,10 +31,10 @@ public class PathRelinking {
 			targetS = s1;
 		}
 		
-		//Initialize answer
+		//Initialize best solution with the initial one
 		Solution bestS = new Solution(initialS);
 		
-		//Symmetric difference: moves to reach target from initial solution
+		//Calculate symmetric difference: moves to reach target from initial solution
 		ArrayList<Integer> symmetricDifference = new ArrayList<Integer>();
 		for(int i = 0; i < instance.getN(); i++) {
 			if(initialS.getIndex(i) == targetS.getIndex(i))
@@ -45,24 +45,31 @@ public class PathRelinking {
 
 		//While we have moves left
 		while(symmetricDifference.size() != 0) {
-			//Calculate best move
+
 			int bestMove = -1;
 			int bestMoveIndex = -1;
 			double bestMoveFo = -Double.MAX_VALUE;
-		
+
+			//Calculate best move
 			for(int i = 0; i < symmetricDifference.size(); i++) {
+
 				int currentMove = symmetricDifference.get(i);
 				double currentFo = instance.calculateFo(bestS);
+	
 				//make a move
 				bestS.changeBit(currentMove);
+
 				//if the move didn't improve the solution undo it
 				if(currentFo > bestMoveFo) {
 					bestMove = currentMove;
 					bestMoveFo = currentFo;
 					bestMoveIndex = i;
 				}
+				
+				//undo current move
 				bestS.changeBit(currentMove);
 			}
+
 			//Remove best move from symmetricDifference and apply it on the bestS
 			symmetricDifference.remove(bestMoveIndex);
 			bestS.changeBit(bestMove);
