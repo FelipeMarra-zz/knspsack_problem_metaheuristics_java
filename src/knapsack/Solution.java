@@ -21,16 +21,13 @@ public class Solution {
 		return s.get(index);
 	}
 	
+	@SuppressWarnings("unused")
 	private ArrayList<Integer> getS() {
 		return s;
 	}
 
 	public void setIndex(int index, int value) {
 		s.set(index, value);
-	}
-	
-	public void setSolution(Solution newS) {
-		s = newS.getS();
 	}
 	
 	public ArrayList<Integer> getSolution() {

@@ -8,7 +8,7 @@ import vnd.VND;
 public class Main {
 	public static void main(String[] args) {
 		//App controller
-		Instance instance = Instance.getInstance();
+		final Instance instance = Instance.getInstance();
 	
 		//Welcome
 		Console.log("Welcome");

@@ -29,7 +29,7 @@ public class Instance {
 	private ArrayList<Double> p = new ArrayList<Double>();// objects profit
 	public int iter_max;
 	public double alfa;
-	
+
 	public boolean instanceIsNull() {
 		if (n == 0) {
 			Console.log("ERROR 404 - INSTANCE NOT FOUND");
@@ -62,7 +62,7 @@ public class Instance {
 						s.add(arrayCharToInt(current));
 					}
 					current.clear();
-				// Input 2, \n = 13
+					// Input 2, \n = 13
 				} else if (c == 13) {
 					if (line == 0) {
 						b = arrayCharToInt(current);
@@ -72,10 +72,10 @@ public class Instance {
 						s.add(arrayCharToInt(current));
 					}
 
-					//Reset current, increment line counter
+					// Reset current, increment line counter
 					current.clear();
 					line++;
-				//Line Feed = 10
+					// Line Feed = 10
 				} else if (c != 10) {
 					current.add((char) c);
 				}
@@ -83,20 +83,20 @@ public class Instance {
 
 			Console.log("n: " + n);
 			Console.log("b: " + b);
-			Console.log("s: " + s);
+			Console.log("s: " + s.getSolution());
 			Console.log("w: " + w);
 			Console.log("p: " + p);
-			
-			//close file and reset best fo
+
+			// close file and reset best fo
 			file.close();
 			resetFo_star();
-	
+
 		} catch (IOException e) {
 			System.err.printf("Something went wrong: %s.\n", e.getMessage());
 		}
 	}
-	
-	//Methods to convert the char array we reading 
+
+	// Methods to convert the char array we reading
 
 	private String arrayCharToString(ArrayList<Character> array) {
 		char[] ch = new char[20];
@@ -118,16 +118,16 @@ public class Instance {
 		String s = arrayCharToString(array);
 		return Double.parseDouble(s);
 	}
-	
-	//Other Methods
+
+	// Other Methods
 
 	public void resetFo_star() {
 		instance.s_star.setFo(-Double.MAX_VALUE);
 	}
-	
-	public ArrayList<KnapsackObject> getSortedObjects(){
+
+	public ArrayList<KnapsackObject> getSortedObjects() {
 		ArrayList<KnapsackObject> sortedObjects = new ArrayList<KnapsackObject>();
-		for(int i = 0; i < n; i++) {
+		for (int i = 0; i < n; i++) {
 			double wheight = w.get(i);
 			double profity = p.get(i);
 			int id = i;
@@ -135,42 +135,40 @@ public class Instance {
 			sortedObjects.add(obj);
 		}
 		sortedObjects.sort(new Comparator<KnapsackObject>() {
-	        @Override
-	        public int compare(KnapsackObject obj1, KnapsackObject obj2)
-	        {
-	            return  Integer.compare(obj1.getId(), obj2.getId());
-	        }
+			@Override
+			public int compare(KnapsackObject obj1, KnapsackObject obj2) {
+				return Integer.compare(obj1.getId(), obj2.getId());
+			}
 		});
 		return sortedObjects;
 	}
-	
+
 	public Double calculateFo(Solution solution) {
 		double foValue;
 		double utility = 0, weight = 0, penality = 0;
-		
-		for(int i = 0; i < n; i++) {
-			if(solution.getIndex(i).equals(1)) {
+
+		for (int i = 0; i < n; i++) {
+			if (solution.getIndex(i).equals(1)) {
 				utility += p.get(i);
 				weight += w.get(i);
 			}
 			penality += w.get(i);
 		}
 
-
 		foValue = utility - penality * Double.max(0, weight - b);
-		
+
 		solution.setFo(foValue);
-		
+
 		return foValue;
 	}
 
-	//Getters & setters
+	// Getters & setters
 
 	public void setIterMax() {
 		Console.log("The maximum of iterations: ");
 		iter_max = Console.readInt();
 	}
-	
+
 	public void setAlfa() {
 		Console.log("Value of alfa: ");
 		alfa = Console.readDouble();
@@ -182,11 +180,20 @@ public class Instance {
 
 	public void setS(Solution s) {
 		this.s = s;
-		
-		if(s.getFo() > s_star.getFo()) {
-			s_star.setSolution(s);
+
+		if (s.getFo() > s_star.getFo()) {
+			s_star = s;
 			calculateFo(s_star);
 		}
+	}
+
+	public void sortSolutions(ArrayList<Solution> solutionSet) {
+		solutionSet.sort(new Comparator<Solution>() {
+			@Override
+			public int compare(Solution s1, Solution s2) {
+				return Double.compare(calculateFo(s1), calculateFo(s2));
+			}
+		});
 	}
 
 	public int getN() {

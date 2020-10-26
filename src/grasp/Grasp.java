@@ -6,15 +6,36 @@ import java.util.Random;
 import knapsack.Instance;
 import knapsack.KnapsackObject;
 import knapsack.Solution;
+import path_relinking.PathRelinking;
+import path_relinking.PathRelinking.Direction;
 import utils.Console;
 import vnd.VND;
 
 public class Grasp {
 	// Controllers
-	Instance instance = Instance.getInstance();
+	final Instance instance = Instance.getInstance();
+	
+	//With Path Relinking
+	public enum WithPR{
+		NO(-1), INTENSIFICATION(1), POST_OPTIMIZATION(2);
+		
+		public int pathReOption;
+		
+		WithPR(int value){
+			pathReOption = value;
+		}
+	}
 
+	private ArrayList<Solution> eliteSet = new ArrayList<Solution>();
+	
 	// Methods
-	public Solution run(Solution s) {
+	/*
+	 * @param [Solution] s: The solution in which the algorithm will be applied
+	 * @param [WithPathRelinking] pathRelinking: If and how [PathRelinking] will be applied
+	 * 
+	 * @return the best [Solution] found
+	 */
+	public Solution run(Solution s, WithPR pathRelinking) {
 		if (instance.instanceIsNull()) {
 			return null;
 		}
@@ -37,18 +58,35 @@ public class Grasp {
 
 			//Apply local search to the built solution
 			Solution vndS = new VND().run(sl);
-			sl.setSolution(vndS);
+			sl = vndS;
 			Console.log("refined solution: " + instance.calculateFo(sl));
 
 			//Update best solution
 			if (instance.calculateFo(sl) > bestS.getFo()) {
+				
+				//If we will have path relinking
+				if(!pathRelinking.equals(WithPR.NO)) {
 
+					eliteSet.add(sl);
+					instance.sortSolutions(eliteSet);
+					Console.log("SORTED ELIT SET " + eliteSet);
+
+					if(pathRelinking.equals(WithPR.INTENSIFICATION)) {
+						Solution prS = new PathRelinking().run(sl, eliteSet.get(0), Direction.BACKWORD);
+						sl = prS;
+					}
+				}
+				
 				//Change s to the best solution
-				bestS.setSolution(sl);
+				bestS = sl;
 
 				//update fo
 				bestS.setFo(instance.calculateFo(sl));
 			}
+		}
+		if(pathRelinking.equals(WithPR.POST_OPTIMIZATION)) {
+			Solution prS = new PathRelinking().runOnEliteSet(eliteSet, Direction.BACKWORD);
+			bestS = prS;
 		}
 		return bestS;
 	}

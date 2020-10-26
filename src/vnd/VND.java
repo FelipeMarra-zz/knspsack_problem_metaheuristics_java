@@ -2,11 +2,10 @@ package vnd;
 
 import knapsack.Instance;
 import knapsack.Solution;
-import utils.Console;
 
 public class VND {
 	// Controllers
-	Instance instance = Instance.getInstance();
+	final Instance instance = Instance.getInstance();
 
 	public Solution run(Solution s) {
 		int k;
@@ -19,10 +18,10 @@ public class VND {
 
 			switch (k) {
 			case 1:
-				s.setSolution(bestNeighborN1(s));
+				s = bestNeighborN1(s);
 				break;
 			case 2:
-				s.setSolution(bestNeighborN2(s));
+				s = bestNeighborN2(s);
 				break;
 			default:
 				break;
