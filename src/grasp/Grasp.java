@@ -17,7 +17,7 @@ public class Grasp {
 	
 	//With Path Relinking
 	public enum WithPR{
-		NO(-1), INTENSIFICATION(1), POST_OPTIMIZATION(2);
+		NO(-1), INTENSIFICATION(1), POST_OPTIMIZATION(2), BOTH(3);
 		
 		public int pathReOption;
 		
@@ -70,8 +70,9 @@ public class Grasp {
 					eliteSet.add(sl);
 					instance.sortSolutions(eliteSet);
 					Console.log("SORTED ELIT SET " + eliteSet);
-
-					if(pathRelinking.equals(WithPR.INTENSIFICATION)) {
+					boolean willRunIntensification = pathRelinking.equals(WithPR.BOTH) ||  
+							pathRelinking.equals(WithPR.INTENSIFICATION);
+					if(willRunIntensification) {
 						Solution prS = new PathRelinking().run(sl, eliteSet.get(0), Direction.BACKWORD);
 						sl = prS;
 					}
@@ -84,7 +85,9 @@ public class Grasp {
 				bestS.setFo(instance.calculateFo(sl));
 			}
 		}
-		if(pathRelinking.equals(WithPR.POST_OPTIMIZATION)) {
+		boolean willRunPostOptimization = pathRelinking.equals(WithPR.BOTH) ||  
+				pathRelinking.equals(WithPR.POST_OPTIMIZATION);
+		if(willRunPostOptimization) {
 			Solution prS = new PathRelinking().runOnEliteSet(eliteSet, Direction.BACKWORD);
 			bestS = prS;
 		}
