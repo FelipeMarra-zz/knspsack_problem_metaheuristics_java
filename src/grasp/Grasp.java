@@ -9,6 +9,7 @@ import knapsack.Solution;
 import path_relinking.PathRelinking;
 import path_relinking.PathRelinking.Direction;
 import utils.Console;
+import utils.Numbers;
 import vnd.VND;
 
 public class Grasp {
@@ -25,8 +26,45 @@ public class Grasp {
 			pathReOption = value;
 		}
 	}
-
+	
+	private int MAX_ELITE;
+	
 	private ArrayList<Solution> eliteSet = new ArrayList<Solution>();
+	
+	private void updateElitSet(Solution s){
+		//If its not full just put s in there
+		if(eliteSet.size() <= MAX_ELITE) {
+			eliteSet.add(s);
+		}else {
+			int smallerSimDif = Integer.MAX_VALUE;
+			int smallerSimDifIndex = Integer.MAX_VALUE;
+			boolean willReplace = false;
+
+			//Look for a eliteS with the smaller symmetric difference that is worst than s
+			for(int i = 0; i < eliteSet.size(); i++) {
+				Solution eliteS = eliteSet.get(i);
+				
+				if(s.getFo() >= eliteS.getFo()) {
+					int simDif = eliteS.symmetricDifference(s).size();
+					
+					if(simDif < smallerSimDif) {
+						smallerSimDifIndex = i;
+						willReplace = true;
+					}
+						
+				}
+					
+			}
+
+			if(willReplace) 
+				eliteSet.set(smallerSimDifIndex, s);
+		}
+	}
+	
+	private Solution chooseEliteS() {
+		int randIndex = (int) Numbers.random() * eliteSet.size();
+		return eliteSet.get(randIndex);
+	}
 	
 	// Methods
 	/*
@@ -53,7 +91,7 @@ public class Grasp {
 		for (int i = 0; i < instance.iter_max; i++) {
 			Console.log("#######Iteration " + i);
 			// Build partially greedy solution
-			sl = buildGraspSolution();
+			sl = greedyRandomizedConstruction();
 			Console.log("built solution: " + instance.calculateFo(sl));
 
 			//Apply local search to the built solution
@@ -66,14 +104,13 @@ public class Grasp {
 				
 				//If we will have path relinking
 				if(!pathRelinking.equals(WithPR.NO)) {
-
-					eliteSet.add(sl);
-					instance.sortSolutions(eliteSet);
-					Console.log("SORTED ELIT SET " + eliteSet);
+					updateElitSet(sl);
+					
 					boolean willRunIntensification = pathRelinking.equals(WithPR.BOTH) ||  
 							pathRelinking.equals(WithPR.INTENSIFICATION);
+
 					if(willRunIntensification) {
-						Solution prS = new PathRelinking().run(sl, eliteSet.get(0), Direction.BACKWORD);
+						Solution prS = new PathRelinking().run(sl, chooseEliteS(), Direction.BACKWORD);
 						sl = prS;
 					}
 				}
@@ -87,25 +124,26 @@ public class Grasp {
 		}
 		boolean willRunPostOptimization = pathRelinking.equals(WithPR.BOTH) ||  
 				pathRelinking.equals(WithPR.POST_OPTIMIZATION);
+
 		if(willRunPostOptimization) {
 			Solution prS = new PathRelinking().runOnEliteSet(eliteSet, Direction.BACKWORD);
 			bestS = prS;
 		}
+
 		return bestS;
 	}
 
-	private Solution buildGraspSolution() {
+	private Solution greedyRandomizedConstruction() {
 		double peso = 0;
 		int j;
 		int restrictSize;
-		double value;
+		double referenceValue;
+		boolean settedMaxElite = false;
 
 		Solution s = new Solution(instance.getN());
 		
 		//Create list of ordered objects
 		ArrayList<KnapsackObject> sortedObjs = instance.getSortedObjects();
-
-		//imprime_lista(objetosOrd);
 
 		//Build a solution element by element, checking if each object fits in the residual capacity of the backpack 
 		while(sortedObjs.size() > 0 && peso < instance.getB()) {
@@ -116,23 +154,26 @@ public class Grasp {
 			KnapsackObject bestObj = sortedObjs.get(0);
 			KnapsackObject worstObj = sortedObjs.get(sortedObjs.size() - 1);
 			
-			value = bestObj.getProfit() - instance.alfa * (bestObj.getProfit() - worstObj.getProfit());
+			referenceValue = bestObj.getProfit() - instance.alfa * (bestObj.getProfit() - worstObj.getProfit());
 			//Console.log("Reference value " + value);
 
 			for (int i = 0; i < sortedObjs.size(); i++){
 				KnapsackObject obj = sortedObjs.get(i);
-				if (obj.getProfit() >= value)
+				if (obj.getProfit() >= referenceValue)
 					restrictSize++;
 				else
 					break;
 			}
+			
+			//set elite set max size to the first restrict Size
+			if(!settedMaxElite) {
+				MAX_ELITE = restrictSize;
+				settedMaxElite = true;
+			}
 
 			//Console.log("RESTRIC SIZE " + restrictSize + " SIZE OF LIST " + sortedObjs.size());
 			//Sort random position from residual list
-			int max = instance.getN();
-			double rand = new Random().nextInt(max);
-			double p = rand/max;
-			j = (int) (p * restrictSize);
+			j = (int) (Numbers.random() * restrictSize);
 			
 			KnapsackObject randObj = sortedObjs.get(j);
 

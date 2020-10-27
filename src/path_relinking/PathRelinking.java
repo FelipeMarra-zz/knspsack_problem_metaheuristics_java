@@ -34,14 +34,8 @@ public class PathRelinking {
 		//Initialize best solution with the initial one
 		Solution bestS = new Solution(initialS);
 		
-		//Calculate symmetric difference: moves to reach target from initial solution
-		ArrayList<Integer> symmetricDifference = new ArrayList<Integer>();
-		for(int i = 0; i < instance.getN(); i++) {
-			if(initialS.getIndex(i) == targetS.getIndex(i))
-				continue;
-			else
-				symmetricDifference.add(i);
-		}
+		//Calculate symmetric difference
+		ArrayList<Integer> symmetricDifference = initialS.symmetricDifference(targetS);
 
 		//While we have moves left
 		while(symmetricDifference.size() != 0) {

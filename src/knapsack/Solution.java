@@ -16,15 +16,20 @@ public class Solution {
 	private double fo;
 	
 	//Methods
-	private void initSolution(int size) {
-		for(int i = 0; i < size; i++)
-			s.add(0);
-	}
 	
-	private void copySolution(Solution cpyS) {
-		s = new ArrayList<Integer>(cpyS.getS());
-		fo = cpyS.getFo();
+	//Calculate symmetric difference: moves to reach target from initial solution
+	public ArrayList<Integer> symmetricDifference(Solution s2) {
+		ArrayList<Integer> symmetricDifference = new ArrayList<Integer>();
+		for(int i = 0; i < s.size(); i++) {
+			if(s.get(i) == s2.getIndex(i))
+				continue;
+			else
+				symmetricDifference.add(i);
+		}
+		return symmetricDifference;
 	}
+
+	//Get, Set and Modify s
 
 	public Integer getIndex(int index) {
 		return s.get(index);
@@ -54,6 +59,18 @@ public class Solution {
 		int newValue = currentValue == 0 ? 1 : 0;
 		s.set(index, newValue);
 	}
+	
+	private void initSolution(int size) {
+		for(int i = 0; i < size; i++)
+			s.add(0);
+	}
+	
+	private void copySolution(Solution cpyS) {
+		s = new ArrayList<Integer>(cpyS.getS());
+		fo = cpyS.getFo();
+	}
+
+	//Other Getters & Setters
 
 	public double getFo() {
 		return fo;
