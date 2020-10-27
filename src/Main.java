@@ -1,5 +1,6 @@
 
 import grasp.Grasp;
+import grasp.Grasp.WithPR;
 import knapsack.Instance;
 import knapsack.Solution;
 import utils.Console;
@@ -43,7 +44,7 @@ public class Main {
 			instance.setAlfa();
 			break;
 		case 4:
-			Solution graspS = new Grasp().run(instance.getS());
+			Solution graspS = new Grasp().run(instance.getS(), WithPR.BOTH);
 			instance.setS(graspS);
 			break;
 		case 5:

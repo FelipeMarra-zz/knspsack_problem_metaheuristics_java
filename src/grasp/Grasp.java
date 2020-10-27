@@ -1,7 +1,6 @@
 package grasp;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import knapsack.Instance;
 import knapsack.KnapsackObject;
