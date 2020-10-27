@@ -19,16 +19,16 @@ public class PathRelinking {
 		}
 	}
 
-	public Solution run(Solution s1, Solution s2, Direction direction) {
+	public Solution run(Solution toImprove, Solution s2, Direction direction) {
 		//Set initial and target solutions
 		Solution initialS = new Solution();
 		Solution targetS = new Solution();
 		if(direction.equals(Direction.FORWARD)) {
-			initialS = s1;
+			initialS = toImprove;
 			targetS = s2;
 		}else {
 			initialS = s2;
-			targetS = s1;
+			targetS = toImprove;
 		}
 		
 		//Initialize best solution with the initial one
@@ -53,7 +53,7 @@ public class PathRelinking {
 				//make a move
 				bestS.changeBit(currentMove);
 
-				//if the move didn't improve the solution undo it
+				//if the move improves the solution
 				if(currentFo > bestMoveFo) {
 					bestMove = currentMove;
 					bestMoveFo = currentFo;
@@ -66,10 +66,17 @@ public class PathRelinking {
 
 			//Remove best move from symmetricDifference and apply it on the bestS
 			symmetricDifference.remove(bestMoveIndex);
-			bestS.changeBit(bestMove);
+			if(bestMove > -1) {
+				bestS.changeBit(bestMove);
+			}
+		}
+		
+		//if the best solution we found is better than the one we want to improve
+		if(instance.calculateFo(bestS) > instance.calculateFo(toImprove)) {
+			toImprove = bestS;
 		}
 
-		return bestS;
+		return toImprove;
 	}
 	
 	//TODO

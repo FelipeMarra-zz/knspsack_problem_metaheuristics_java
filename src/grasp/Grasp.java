@@ -43,7 +43,7 @@ public class Grasp {
 			for(int i = 0; i < eliteSet.size(); i++) {
 				Solution eliteS = eliteSet.get(i);
 				
-				if(s.getFo() >= eliteS.getFo()) {
+				if(instance.calculateFo(s) >= instance.calculateFo(eliteS)) {
 					int simDif = eliteS.symmetricDifference(s).size();
 					
 					if(simDif < smallerSimDif) {
