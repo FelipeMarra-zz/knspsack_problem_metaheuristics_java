@@ -58,6 +58,9 @@ public class Grasp {
 			if(willReplace) 
 				eliteSet.set(smallerSimDifIndex, s);
 		}
+		
+		//Sort elite set in descending  order
+		Solution.sortArrayOfSolutions(eliteSet, true);
 	}
 	
 	private Solution chooseEliteS() {
@@ -77,7 +80,15 @@ public class Grasp {
 			return null;
 		}
 		Console.log("Running Grasp: ");
+		//path relinking options
+		boolean willRunPathRelinking = !pathRelinking.equals(WithPR.NO);
 
+		boolean willRunIntensification = pathRelinking.equals(WithPR.BOTH) ||  
+				pathRelinking.equals(WithPR.INTENSIFICATION);
+
+		boolean willRunPostOptimization = pathRelinking.equals(WithPR.BOTH) ||  
+				pathRelinking.equals(WithPR.POST_OPTIMIZATION);
+		
 		//Best solution
 		Solution bestS = new Solution();
 		bestS.setFo(-Double.MAX_VALUE);
@@ -88,47 +99,42 @@ public class Grasp {
 
 		// Till stopping criteria (max of iterations)
 		for (int i = 0; i < instance.iter_max; i++) {
-			Console.log("#######Iteration " + i);
+			Console.log("\n #######Iteration #########" + i);
 			// Build partially greedy solution
 			sl = greedyRandomizedConstruction();
-			Console.log("built solution: " + instance.calculateFo(sl));
+			Console.log("Built Solution: " + instance.calculateFo(sl));
 
 			//Apply local search to the built solution
 			Solution vndS = new VND().run(sl);
 			sl = vndS;
-			Console.log("refined solution: " + instance.calculateFo(sl));
+			Console.log("VND Solution: " + instance.calculateFo(sl));
+			
+			//If we will have path relinking
+			if(willRunPathRelinking) {
+				updateElitSet(sl);
+
+				if(willRunIntensification) {
+					Solution prS = new PathRelinking().run(sl, chooseEliteS(), Direction.BACKWORD);
+					sl = prS;
+					Console.log("PR Intensification Solution: " + prS.getFo());
+				}
+			}
 
 			//Update best solution
+			//Console.log("IS BETTER " + (instance.calculateFo(sl) > bestS.getFo()) + " " + instance.calculateFo(sl) + " > " +bestS.getFo());
 			if (instance.calculateFo(sl) > bestS.getFo()) {
-				
-				//If we will have path relinking
-				if(!pathRelinking.equals(WithPR.NO)) {
-					updateElitSet(sl);
-					
-					boolean willRunIntensification = pathRelinking.equals(WithPR.BOTH) ||  
-							pathRelinking.equals(WithPR.INTENSIFICATION);
-
-					if(willRunIntensification) {
-						Solution prS = new PathRelinking().run(sl, chooseEliteS(), Direction.BACKWORD);
-						sl = prS;
-					}
-				}
-				
 				//Change s to the best solution
 				bestS = sl;
-
-				//update fo
-				bestS.setFo(instance.calculateFo(sl));
 			}
 		}
-		boolean willRunPostOptimization = pathRelinking.equals(WithPR.BOTH) ||  
-				pathRelinking.equals(WithPR.POST_OPTIMIZATION);
 
 		if(willRunPostOptimization) {
 			Solution prS = new PathRelinking().runOnEliteSet(eliteSet, Direction.BACKWORD);
 			bestS = prS;
+			Console.log("\n PR Post Solution: " + prS.getFo());
 		}
 
+		Console.log("FINAL BEST Solution: " + instance.calculateFo(bestS));
 		return bestS;
 	}
 
@@ -141,9 +147,9 @@ public class Grasp {
 
 		Solution s = new Solution(instance.getN());
 		
-		//Create list of ordered objects
-		ArrayList<KnapsackObject> sortedObjs = instance.getSortedObjects();
-
+		//Create list of ordered objects in descending order
+		ArrayList<KnapsackObject> sortedObjs = instance.getSortedObjects(true);
+		
 		//Build a solution element by element, checking if each object fits in the residual capacity of the backpack 
 		while(sortedObjs.size() > 0 && peso < instance.getB()) {
 			restrictSize = 0;
@@ -155,9 +161,10 @@ public class Grasp {
 			
 			referenceValue = bestObj.getProfit() - instance.alfa * (bestObj.getProfit() - worstObj.getProfit());
 			//Console.log("Reference value " + value);
-
+			
 			for (int i = 0; i < sortedObjs.size(); i++){
 				KnapsackObject obj = sortedObjs.get(i);
+
 				if (obj.getProfit() >= referenceValue)
 					restrictSize++;
 				else
@@ -166,7 +173,8 @@ public class Grasp {
 			
 			//set elite set max size to the first restrict Size
 			if(!settedMaxElite) {
-				MAX_ELITE = restrictSize;
+				MAX_ELITE = restrictSize/2;
+				Console.log("ELITE SET SIZE " + MAX_ELITE/2);
 				settedMaxElite = true;
 			}
 

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import knapsack.Instance;
 import knapsack.Solution;
+import utils.Console;
 
 public class PathRelinking {
 	// Controllers
@@ -19,20 +20,21 @@ public class PathRelinking {
 		}
 	}
 
-	public Solution run(Solution toImprove, Solution s2, Direction direction) {
+	public Solution run(Solution s1, Solution s2, Direction direction) {
 		//Set initial and target solutions
 		Solution initialS = new Solution();
 		Solution targetS = new Solution();
 		if(direction.equals(Direction.FORWARD)) {
-			initialS = toImprove;
+			initialS = s1;
 			targetS = s2;
 		}else {
 			initialS = s2;
-			targetS = toImprove;
+			targetS = s1;
 		}
 		
-		//Initialize best solution with the initial one
+		//Initialize best and current solutions with the initial one
 		Solution bestS = new Solution(initialS);
+		Solution currentS = new Solution(initialS);
 		
 		//Calculate symmetric difference
 		ArrayList<Integer> symmetricDifference = initialS.symmetricDifference(targetS);
@@ -46,12 +48,14 @@ public class PathRelinking {
 
 			//Calculate best move
 			for(int i = 0; i < symmetricDifference.size(); i++) {
-
+				//Get and make a move
 				int currentMove = symmetricDifference.get(i);
-				double currentFo = instance.calculateFo(bestS);
+				currentS.changeBit(currentMove);
+
+				//fo with the applied movement
+				double currentFo = instance.calculateFo(currentS);
 	
-				//make a move
-				bestS.changeBit(currentMove);
+				
 
 				//if the move improves the solution
 				if(currentFo > bestMoveFo) {
@@ -61,22 +65,33 @@ public class PathRelinking {
 				}
 				
 				//undo current move
-				bestS.changeBit(currentMove);
+				currentS.changeBit(currentMove);
 			}
 
-			//Remove best move from symmetricDifference and apply it on the bestS
-			symmetricDifference.remove(bestMoveIndex);
 			if(bestMove > -1) {
-				bestS.changeBit(bestMove);
+				//Remove best move from symmetricDifference
+				symmetricDifference.remove(bestMoveIndex);
+
+				//Apply it on the currentS
+				currentS.changeBit(bestMove);
+				double foWithBestMove = instance.calculateFo(currentS);
+				//If the movement don't improve undo it
+				if(!(foWithBestMove > instance.calculateFo(currentS))) {
+					currentS.changeBit(bestMove);
+				}else {
+					Console.log("BEST MOVE IMPROVED CURRENT");
+				}
+				
+			}
+
+			//If the current solution is better, copy it to the bestS
+			if(currentS.getFo() > instance.calculateFo(bestS)) {
+				bestS = new Solution(currentS);
+				Console.log("CURRENT SOLUTION IMPROVED BEST ONE");
 			}
 		}
-		
-		//if the best solution we found is better than the one we want to improve
-		if(instance.calculateFo(bestS) > instance.calculateFo(toImprove)) {
-			toImprove = bestS;
-		}
 
-		return toImprove;
+		return bestS;
 	}
 	
 	//TODO

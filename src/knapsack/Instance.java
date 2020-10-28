@@ -1,7 +1,7 @@
 package knapsack;
 
 import java.util.ArrayList;
-
+import java.util.Collections;
 import java.util.Comparator;
 
 import utils.Console;
@@ -125,22 +125,28 @@ public class Instance {
 		instance.s_star.setFo(-Double.MAX_VALUE);
 	}
 
-	public ArrayList<KnapsackObject> getSortedObjects() {
-		ArrayList<KnapsackObject> sortedObjects = new ArrayList<KnapsackObject>();
+	public ArrayList<KnapsackObject> getSortedObjects(boolean descending) {
+		//get objects list
+		ArrayList<KnapsackObject> objects = new ArrayList<KnapsackObject>();
 		for (int i = 0; i < n; i++) {
 			double wheight = w.get(i);
 			double profity = p.get(i);
 			int id = i;
 			KnapsackObject obj = new KnapsackObject(wheight, profity, id);
-			sortedObjects.add(obj);
+			objects.add(obj);
 		}
-		sortedObjects.sort(new Comparator<KnapsackObject>() {
-			@Override
-			public int compare(KnapsackObject obj1, KnapsackObject obj2) {
-				return Integer.compare(obj1.getId(), obj2.getId());
-			}
-		});
-		return sortedObjects;
+		
+		//Sorted objects
+		if(descending) {
+			Collections.sort(objects, 
+				    Comparator.comparingDouble(KnapsackObject::getProfit).reversed());
+
+		}else {
+			Collections.sort(objects, 
+				    Comparator.comparingDouble(KnapsackObject::getProfit));
+		}
+
+		return objects;
 	}
 
 	public Double calculateFo(Solution solution) {

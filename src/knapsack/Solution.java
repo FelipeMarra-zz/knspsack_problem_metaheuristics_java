@@ -1,5 +1,7 @@
 package knapsack;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Solution {
 	public Solution(){};
@@ -68,6 +70,17 @@ public class Solution {
 	private void copySolution(Solution cpyS) {
 		s = new ArrayList<Integer>(cpyS.getS());
 		fo = cpyS.getFo();
+	}
+	
+	public static void sortArrayOfSolutions(ArrayList<Solution> array, boolean descending) {
+		if(descending) {
+			Collections.sort(array, 
+				    Comparator.comparingDouble(Solution::getFo).reversed());
+
+		}else {
+			Collections.sort(array, 
+				    Comparator.comparingDouble(Solution::getFo));
+		}
 	}
 
 	//Other Getters & Setters
