@@ -8,7 +8,7 @@ import utils.Console;
 
 public class PathRelinking {
 	// Controllers
-	final Instance instance = Instance.getInstance();
+	static final Instance instance = Instance.getInstance();
 
 	public enum Direction {
 		FORWARD(1), BACKWORD(-1);
@@ -20,7 +20,7 @@ public class PathRelinking {
 		}
 	}
 
-	public Solution run(Solution s1, Solution s2, Direction direction) {
+	public static Solution run(Solution s1, Solution s2, Direction direction) {
 		// Set initial and target solutions
 		Solution initialS = new Solution();
 		Solution targetS = new Solution();
@@ -39,7 +39,7 @@ public class PathRelinking {
 		// Calculate symmetric difference
 		ArrayList<Integer> symmetricDifference = initialS.symmetricDifference(targetS);
 
-		// While we have moves left
+		//While we have moves left
 		while (symmetricDifference.size() != 0) {
 
 			int bestMove = -1;
@@ -68,35 +68,90 @@ public class PathRelinking {
 
 			// Remove best move from symmetricDifference
 			symmetricDifference.remove(bestMoveIndex);
-
+			
 			//Apply it on the currentS
 			currentS.changeBit(bestMove);
 
 			// If the current solution is better, copy it to the bestS
 			if (instance.calculateFo(currentS) > instance.calculateFo(bestS)) {
 				bestS = new Solution(currentS);
-				Console.log("CURRENT SOLUTION IMPROVED BEST ONE");
 			}
 		}
 
 		return bestS;
 	}
 
-	// TODO
-	public Solution runOnEliteSet(ArrayList<Solution> eliteSet, Direction direction) {
-		// init best solution as the best on the eliteSet
-		Solution bestS = new Solution(eliteSet.get(0));
+	static public Solution runOnEliteSet(ArrayList<Solution> eliteSet, Direction direction, int maxSize) {
+		//the initial current pool is the elite set
+		ArrayList<Solution> currentPool = new ArrayList<Solution>(eliteSet);
+		
+		//init next pool with a solution worst than the better of the current to start the loop
+		ArrayList<Solution> nextPool = new ArrayList<Solution>();
+		
+		//While we generate better solutions
+		while(nextPool.size() == 0) {
+			//Combine all solutions in the current pool using path relinking
+			for(int i = 0; i < currentPool.size(); i++) {
+				Solution toRun = currentPool.get(i);
 
-		// run path relinking for each solution in eliteSet, set bestS to the best
-		// answer
-		Solution prS = new Solution();
-		for (int i = 1; i < eliteSet.size(); i++) {
-			prS = run(bestS, eliteSet.get(i), direction);
+				for(int j = 0; j < currentPool.size(); j++) {
+					if(i != j) {
+						Solution toRunWith = currentPool.get(j);
+	
+						//Run path relinking with then
+						Solution prS = run(toRun, toRunWith, Direction.BACKWORD);
+	
+						//update next pool
+						updateAPoolOfSolutions(prS, nextPool, maxSize);
+					}
 
-			if (prS.getFo() > instance.calculateFo(bestS)) {
-				bestS = prS;
+				}
 			}
+			
+			//if we got a new best solution
+			if(nextPool.get(0).getFo() > currentPool.get(0).getFo()) {
+				//Current pool is now the next one
+				currentPool = nextPool;
+
+				//reset next pool
+				nextPool.clear();
+			}
+			
 		}
-		return bestS;
+
+		return nextPool.get(0);
+	}
+	
+	public static void updateAPoolOfSolutions(Solution s, ArrayList<Solution> pool, int maxSize){
+		//If its not full just put s in there
+		if(pool.size() <= maxSize) {
+			pool.add(s);
+		}else {
+			int smallerSimDif = Integer.MAX_VALUE;
+			int smallerSimDifIndex = Integer.MAX_VALUE;
+			boolean willReplace = false;
+
+			//Look for a eliteS with the smaller symmetric difference that is worst than s
+			for(int i = 0; i < pool.size(); i++) {
+				Solution eliteS = pool.get(i);
+				
+				if(instance.calculateFo(s) >= instance.calculateFo(eliteS)) {
+					int simDif = eliteS.symmetricDifference(s).size();
+					
+					if(simDif < smallerSimDif) {
+						smallerSimDifIndex = i;
+						willReplace = true;
+					}
+						
+				}
+					
+			}
+
+			if(willReplace) 
+				pool.set(smallerSimDifIndex, s);
+		}
+		
+		//Sort elite set in descending  order
+		Solution.sortArrayOfSolutions(pool, true);
 	}
 }

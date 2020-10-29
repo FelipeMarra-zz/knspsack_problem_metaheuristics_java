@@ -30,42 +30,12 @@ public class Grasp {
 	
 	private ArrayList<Solution> eliteSet = new ArrayList<Solution>();
 	
-	private void updateElitSet(Solution s){
-		//If its not full just put s in there
-		if(eliteSet.size() <= MAX_ELITE) {
-			eliteSet.add(s);
-		}else {
-			int smallerSimDif = Integer.MAX_VALUE;
-			int smallerSimDifIndex = Integer.MAX_VALUE;
-			boolean willReplace = false;
-
-			//Look for a eliteS with the smaller symmetric difference that is worst than s
-			for(int i = 0; i < eliteSet.size(); i++) {
-				Solution eliteS = eliteSet.get(i);
-				
-				if(instance.calculateFo(s) >= instance.calculateFo(eliteS)) {
-					int simDif = eliteS.symmetricDifference(s).size();
-					
-					if(simDif < smallerSimDif) {
-						smallerSimDifIndex = i;
-						willReplace = true;
-					}
-						
-				}
-					
-			}
-
-			if(willReplace) 
-				eliteSet.set(smallerSimDifIndex, s);
+	//Choose an elite solution to go into path relinking with the localOptimum
+	private Solution chooseEliteS(Solution localOptimum) {
+		if(eliteSet.size() == 0) {
+			return localOptimum;
 		}
-		
-		//Sort elite set in descending  order
-		Solution.sortArrayOfSolutions(eliteSet, true);
-	}
-	
-	private Solution chooseEliteS() {
-		int randIndex = (int) Numbers.random() * eliteSet.size();
-		return eliteSet.get(randIndex);
+		return Solution.biggerSymmetricDifference(localOptimum, eliteSet);
 	}
 	
 	// Methods
@@ -111,13 +81,13 @@ public class Grasp {
 			
 			//If we will have path relinking
 			if(willRunPathRelinking) {
-				updateElitSet(sl);
-
 				if(willRunIntensification) {
-					Solution prS = new PathRelinking().run(sl, chooseEliteS(), Direction.BACKWORD);
+					Solution prS = PathRelinking.run(sl, chooseEliteS(sl), Direction.BACKWORD);
 					sl = prS;
 					Console.log("PR Intensification Solution: " + prS.getFo());
 				}
+				
+				PathRelinking.updateAPoolOfSolutions(sl, eliteSet, MAX_ELITE);
 			}
 
 			//Update best solution
@@ -128,8 +98,8 @@ public class Grasp {
 			}
 		}
 
-		if(willRunPostOptimization) {
-			Solution prS = new PathRelinking().runOnEliteSet(eliteSet, Direction.BACKWORD);
+		if(willRunPostOptimization && eliteSet.size() > 1) {
+			Solution prS = PathRelinking.runOnEliteSet(eliteSet, Direction.BACKWORD, MAX_ELITE);
 			bestS = prS;
 			Console.log("\n PR Post Solution: " + prS.getFo());
 		}
@@ -174,7 +144,6 @@ public class Grasp {
 			//set elite set max size to the first restrict Size
 			if(!settedMaxElite) {
 				MAX_ELITE = restrictSize/2;
-				Console.log("ELITE SET SIZE " + MAX_ELITE/2);
 				settedMaxElite = true;
 			}
 
