@@ -3,12 +3,12 @@ package knapsack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-
-import utils.Console;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import utils.Console;
+
+
 
 public class Instance {
 	// ###Singleton:
@@ -126,7 +126,7 @@ public class Instance {
 	}
 
 	public ArrayList<KnapsackObject> getSortedObjects(boolean descending) {
-		//get objects list
+		// get objects list
 		ArrayList<KnapsackObject> objects = new ArrayList<KnapsackObject>();
 		for (int i = 0; i < n; i++) {
 			double wheight = w.get(i);
@@ -135,15 +135,13 @@ public class Instance {
 			KnapsackObject obj = new KnapsackObject(wheight, profity, id);
 			objects.add(obj);
 		}
-		
-		//Sorted objects
-		if(descending) {
-			Collections.sort(objects, 
-				    Comparator.comparingDouble(KnapsackObject::getProfit).reversed());
 
-		}else {
-			Collections.sort(objects, 
-				    Comparator.comparingDouble(KnapsackObject::getProfit));
+		// Sorted objects
+		if (descending) {
+			Collections.sort(objects, Comparator.comparingDouble(KnapsackObject::getProfit).reversed());
+
+		} else {
+			Collections.sort(objects, Comparator.comparingDouble(KnapsackObject::getProfit));
 		}
 
 		return objects;

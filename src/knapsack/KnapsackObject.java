@@ -11,7 +11,7 @@ public class KnapsackObject {
 	double utility;
 	double profit;
 	private int id;
-	
+
 	public double getWeight() {
 		return weight;
 	}

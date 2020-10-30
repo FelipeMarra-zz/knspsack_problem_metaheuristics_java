@@ -3,7 +3,6 @@ package knapsack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-
 import utils.Console;
 
 public class Solution {
@@ -63,7 +62,6 @@ public class Solution {
 		return s.get(index);
 	}
 
-	@SuppressWarnings("unused")
 	private ArrayList<Integer> getS() {
 		return s;
 	}

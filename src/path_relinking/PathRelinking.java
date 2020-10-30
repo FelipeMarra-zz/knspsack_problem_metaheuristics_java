@@ -1,10 +1,8 @@
 package path_relinking;
 
 import java.util.ArrayList;
-
 import knapsack.Instance;
 import knapsack.Solution;
-import utils.Console;
 
 public class PathRelinking {
 	// Controllers
@@ -39,7 +37,7 @@ public class PathRelinking {
 		// Calculate symmetric difference
 		ArrayList<Integer> symmetricDifference = initialS.symmetricDifference(targetS);
 
-		//While we have moves left
+		// While we have moves left
 		while (symmetricDifference.size() != 0) {
 
 			int bestMove = -1;
@@ -68,8 +66,8 @@ public class PathRelinking {
 
 			// Remove best move from symmetricDifference
 			symmetricDifference.remove(bestMoveIndex);
-			
-			//Apply it on the currentS
+
+			// Apply it on the currentS
 			currentS.changeBit(bestMove);
 
 			// If the current solution is better, copy it to the bestS
@@ -82,76 +80,77 @@ public class PathRelinking {
 	}
 
 	static public Solution runOnEliteSet(ArrayList<Solution> eliteSet, Direction direction, int maxSize) {
-		//the initial current pool is the elite set
+		// the initial current pool is the elite set
 		ArrayList<Solution> currentPool = new ArrayList<Solution>(eliteSet);
-		
-		//init next pool with a solution worst than the better of the current to start the loop
+
+		// init next pool with a solution worst than the better of the current to start
+		// the loop
 		ArrayList<Solution> nextPool = new ArrayList<Solution>();
-		
-		//While we generate better solutions
-		while(nextPool.size() == 0) {
-			//Combine all solutions in the current pool using path relinking
-			for(int i = 0; i < currentPool.size(); i++) {
+
+		// While we generate better solutions
+		while (nextPool.size() == 0) {
+			// Combine all solutions in the current pool using path relinking
+			for (int i = 0; i < currentPool.size(); i++) {
 				Solution toRun = currentPool.get(i);
 
-				for(int j = 0; j < currentPool.size(); j++) {
-					if(i != j) {
+				for (int j = 0; j < currentPool.size(); j++) {
+					if (i != j) {
 						Solution toRunWith = currentPool.get(j);
-	
-						//Run path relinking with then
+
+						// Run path relinking with then
 						Solution prS = run(toRun, toRunWith, Direction.BACKWORD);
-	
-						//update next pool
+
+						// update next pool
 						updateAPoolOfSolutions(prS, nextPool, maxSize);
 					}
 
 				}
 			}
-			
-			//if we got a new best solution
-			if(nextPool.get(0).getFo() > currentPool.get(0).getFo()) {
-				//Current pool is now the next one
+
+			// if we got a new best solution
+			if (nextPool.get(0).getFo() > currentPool.get(0).getFo()) {
+				// Current pool is now the next one
 				currentPool = nextPool;
 
-				//reset next pool
+				// reset next pool
 				nextPool.clear();
 			}
-			
+
 		}
 
 		return nextPool.get(0);
 	}
-	
-	public static void updateAPoolOfSolutions(Solution s, ArrayList<Solution> pool, int maxSize){
-		//If its not full just put s in there
-		if(pool.size() <= maxSize) {
+
+	public static void updateAPoolOfSolutions(Solution s, ArrayList<Solution> pool, int maxSize) {
+		// If its not full just put s in there
+		if (pool.size() <= maxSize) {
 			pool.add(s);
-		}else {
+		} else {
 			int smallerSimDif = Integer.MAX_VALUE;
 			int smallerSimDifIndex = Integer.MAX_VALUE;
 			boolean willReplace = false;
 
-			//Look for a eliteS with the smaller symmetric difference that is worst than s
-			for(int i = 0; i < pool.size(); i++) {
+			// Look for a eliteS with the smaller symmetric difference that is worst than s
+			for (int i = 0; i < pool.size(); i++) {
 				Solution eliteS = pool.get(i);
-				
-				if(instance.calculateFo(s) >= instance.calculateFo(eliteS)) {
+
+				if (instance.calculateFo(s) >= instance.calculateFo(eliteS)) {
 					int simDif = eliteS.symmetricDifference(s).size();
-					
-					if(simDif < smallerSimDif) {
+
+					if (simDif < smallerSimDif) {
 						smallerSimDifIndex = i;
 						willReplace = true;
 					}
-						
+
 				}
-					
+
 			}
 
-			if(willReplace) 
+			if (willReplace)
 				pool.set(smallerSimDifIndex, s);
 		}
-		
-		//Sort elite set in descending  order
+
+		// Sort elite set in descending order
 		Solution.sortArrayOfSolutions(pool, true);
 	}
 }
