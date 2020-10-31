@@ -1,1 +1,60 @@
-               Grasp               Grasp-PR
+Instance: knapPI_1_1000_1000_1 
+               Grasp               Grasp-PR 
+Avarage Fo     34796                 36504 
+Avarage Time   135597ms              140068ms 
+ 
+Instance: knapPI_1_100_1000_1 
+               Grasp               Grasp-PR 
+Avarage Fo     7967                 9147 
+Avarage Time   88ms                 118ms 
+ 
+Instance: knapPI_1_200_1000_1 
+               Grasp               Grasp-PR 
+Avarage Fo     10777                 9371 
+Avarage Time   405ms                 428ms 
+ 
+Instance: knapPI_1_500_1000_1 
+               Grasp               Grasp-PR 
+Avarage Fo     23520                 23741 
+Avarage Time   11906ms               12368ms 
+
+Instance: knapPI_2_1000_1000_1 
+               Grasp               Grasp-PR 
+Avarage Fo     6379                 6527 
+Avarage Time   94379ms              87225ms 
+ 
+Instance: knapPI_2_100_1000_1 
+               Grasp               Grasp-PR 
+Avarage Fo     1300                 1290 
+Avarage Time   66ms                 79ms 
+ 
+Instance: knapPI_2_200_1000_1 
+               Grasp               Grasp-PR 
+Avarage Fo     1314                 1321 
+Avarage Time   344ms               346ms 
+ 
+Instance: knapPI_2_500_1000_1 
+               Grasp               Grasp-PR 
+Avarage Fo     3381                 3566 
+Avarage Time   7701ms               7898ms 
+ 
+Instance: knapPI_3_1000_1000_1 
+               Grasp               Grasp-PR 
+Avarage Fo     6190                 6190 
+Avarage Time   18796ms              20797ms 
+ 
+Instance: knapPI_3_100_1000_1 
+               Grasp               Grasp-PR 
+Avarage Fo     1496                 1595 
+Avarage Time   37ms                 37ms 
+ 
+Instance: knapPI_3_200_1000_1 
+               Grasp               Grasp-PR 
+Avarage Fo     1597                 1397 
+Avarage Time   187ms                176ms 
+ 
+Instance: knapPI_3_500_1000_1 
+               Grasp               Grasp-PR 
+Avarage Fo     3317                 3416 
+Avarage Time   3036ms               2497ms 
+ 

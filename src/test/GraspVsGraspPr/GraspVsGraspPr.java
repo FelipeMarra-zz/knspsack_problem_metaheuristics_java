@@ -27,15 +27,16 @@ public class GraspVsGraspPr {
         for (File file : files) {
             Console.log("Loading instance " + file.getName());
 
-            Files.writeLine(fileName, "Testing instance " + file.getName());
-            Files.writeLine(fileName, SPACES_15 + "Grasp" + SPACES_15 + "Grasp-PR");
-
             instance.read(file.getAbsolutePath());
 
-            if(instance.getN() > 500){
+            if(instance.getN() >= 2000){
                 continue;
             }
-            instance.iter_max = 1;
+
+            Files.writeLine(fileName, "Instance: " + file.getName());
+            Files.writeLine(fileName, SPACES_15 + "Grasp" + SPACES_15 + "Grasp-PR");
+
+            instance.iter_max = 15;
 
             // Classic Grasp
             ArrayList<Long> classicData = testGrasp(WithPR.NO, 1);
@@ -43,8 +44,9 @@ public class GraspVsGraspPr {
             // Grasp PR
             ArrayList<Long> prData = testGrasp(WithPR.BOTH, 1);
             
-            Files.writeLine(fileName, "Avarage Fo " + classicData.get(0) + "  " + prData.get(0));
-            Files.writeLine(fileName, "Avarage Time " + classicData.get(0) + "  " + prData.get(0));
+            Files.writeLine(fileName, "Avarage Fo     " + classicData.get(0) + SPACES_15 + "  " + prData.get(0));
+            Files.writeLine(fileName, "Avarage Time   " + classicData.get(1) + "ms" + SPACES_15 + prData.get(1) + "ms");
+            Files.writeLine(fileName, "");
         }
     }
 
@@ -57,7 +59,7 @@ public class GraspVsGraspPr {
         for (int i = 0; i < iter; i++) {
             Timestamp init = new Timestamp(System.currentTimeMillis());
 
-            ofs.add((long) Grasp.run(instance.s, withPR).getFo());
+            ofs.add((long) new Grasp().run(instance.s, withPR).getFo());
 
             Timestamp end = new Timestamp(System.currentTimeMillis());
             // Add timestamp delta

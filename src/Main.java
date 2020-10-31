@@ -42,7 +42,7 @@ public class Main {
 					instance.setAlfa();
 					break;
 				case 4:
-					Solution graspS = Grasp.run(instance.getS(), WithPR.BOTH);
+					Solution graspS = new Grasp().run(instance.getS(), WithPR.BOTH);
 					instance.setS(graspS);
 					break;
 				case 5:

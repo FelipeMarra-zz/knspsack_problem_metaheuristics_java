@@ -27,8 +27,8 @@ public class Files {
 
     public static void writeLine(String file, String line) {
         try {
-            FileWriter myWriter = new FileWriter(file);
-            myWriter.write(line);
+            FileWriter myWriter = new FileWriter(file, true);
+            myWriter.write(line + " \n");
             myWriter.close();
         } catch (IOException e) {
             System.out.println("An error occurred writing on file " + file);

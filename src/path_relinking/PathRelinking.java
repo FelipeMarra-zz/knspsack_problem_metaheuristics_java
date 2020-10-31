@@ -7,7 +7,7 @@ import utils.Console;
 
 public class PathRelinking {
 	// Controllers
-	static final Instance instance = Instance.getInstance();
+	final Instance instance = Instance.getInstance();
 
 	public enum Direction {
 		FORWARD(1), BACKWORD(-1);
@@ -19,7 +19,7 @@ public class PathRelinking {
 		}
 	}
 
-	public static Solution run(Solution s1, Solution s2, Direction direction) {
+	public Solution run(Solution s1, Solution s2, Direction direction) {
 		// Set initial and target solutions
 		Solution initialS = new Solution();
 		Solution targetS = new Solution();
@@ -80,7 +80,7 @@ public class PathRelinking {
 		return bestS;
 	}
 
-	static public Solution runOnEliteSet(ArrayList<Solution> eliteSet, Direction direction, int maxSize) {
+	public Solution runOnEliteSet(ArrayList<Solution> eliteSet, Direction direction, int maxSize) {
 		// the initial current pool is the elite set
 		ArrayList<Solution> currentPool = new ArrayList<Solution>(eliteSet);
 
@@ -109,8 +109,11 @@ public class PathRelinking {
 			}
 
 			// if we got a new best solution
-			//TODO index out of range
+			// TODO index out of range
 			Console.log("Next pool size " + nextPool.size());
+			if(nextPool.isEmpty()){
+				continue;
+			}
 			if (nextPool.get(0).getFo() > currentPool.get(0).getFo()) {
 				// Current pool is now the next one
 				currentPool = nextPool;
@@ -124,11 +127,11 @@ public class PathRelinking {
 		return nextPool.get(0);
 	}
 
-	public static void updateAPoolOfSolutions(Solution s, ArrayList<Solution> pool, int maxSize) {
+	public void updateAPoolOfSolutions(Solution s, ArrayList<Solution> pool, int maxSize) {
 		// If its not full just put s in there
 		if (pool.size() <= maxSize) {
 
-			if(isThereEqualSolution(s, pool)){
+			if (isThereEqualSolution(s, pool)) {
 				return;
 			}
 
@@ -154,7 +157,7 @@ public class PathRelinking {
 
 			}
 
-			if(isThereEqualSolution(s, pool)){
+			if (isThereEqualSolution(s, pool)) {
 				return;
 			}
 
@@ -165,23 +168,23 @@ public class PathRelinking {
 		// Sort elite set in descending order
 		Solution.sortArrayOfSolutions(pool, true);
 
-		//printPool(pool);
+		// printPool(pool);
 	}
 
-	public static boolean isThereEqualSolution(Solution s, ArrayList<Solution> pool){
-		for(Solution poolS : pool){
-			if(Double.compare(instance.calculateFo(s), instance.calculateFo(poolS)) == 0){
-				//Console.log("OF IS EQUAK " + s.getFo() + " != " + poolS.getFo());
+	public boolean isThereEqualSolution(Solution s, ArrayList<Solution> pool) {
+		for (Solution poolS : pool) {
+			if (Double.compare(instance.calculateFo(s), instance.calculateFo(poolS)) == 0) {
+				// Console.log("OF IS EQUAK " + s.getFo() + " != " + poolS.getFo());
 				return true;
 			}
 		}
-		//Console.log("THE IS NO EQUAL OF FOR "  + s.getFo());
+		// Console.log("THE IS NO EQUAL OF FOR " + s.getFo());
 		return false;
 	}
 
-	public static void printPool(ArrayList<Solution> pool){
+	public void printPool(ArrayList<Solution> pool) {
 		Console.log("######## NEW POOL ###########");
-		for(Solution s : pool){
+		for (Solution s : pool) {
 			Console.log(instance.calculateFo(s));
 		}
 	}

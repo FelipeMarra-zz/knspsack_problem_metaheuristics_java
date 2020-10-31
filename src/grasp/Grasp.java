@@ -12,7 +12,7 @@ import vnd.VND;
 
 public class Grasp {
 	// Controllers
-	final static Instance instance = Instance.getInstance();
+	final Instance instance = Instance.getInstance();
 
 	// With Path Relinking
 	public enum WithPR {
@@ -25,12 +25,12 @@ public class Grasp {
 		}
 	}
 
-	private static int MAX_ELITE;
+	private int MAX_ELITE;
 
-	private static ArrayList<Solution> eliteSet = new ArrayList<Solution>();
+	private ArrayList<Solution> eliteSet = new ArrayList<Solution>();
 
 	// Choose an elite solution to go into path relinking with the localOptimum
-	private static Solution chooseEliteS(Solution localOptimum) {
+	private Solution chooseEliteS(Solution localOptimum) {
 		if (eliteSet.size() == 0) {
 			return localOptimum;
 		}
@@ -46,7 +46,7 @@ public class Grasp {
 	 * 
 	 * @return the best [Solution] found
 	 */
-	public static Solution run(Solution s, WithPR pathRelinking) {
+	public Solution run(Solution s, WithPR pathRelinking) {
 		if (instance.instanceIsNull()) {
 			return null;
 		}
@@ -69,7 +69,7 @@ public class Grasp {
 
 		// Till stopping criteria (max of iterations)
 		for (int i = 0; i < instance.iter_max; i++) {
-			Console.log("\n #######Iteration " + (i+1) + "#########");
+			Console.log("\n #######Iteration " + (i + 1) + "#########");
 			// Build partially greedy solution
 			sl = greedyRandomizedConstruction();
 			Console.log("Built Solution: " + instance.calculateFo(sl));
@@ -81,14 +81,14 @@ public class Grasp {
 
 			// If we will have path relinking
 			if (willRunPathRelinking) {
-				//Wait a minimun size for elite set
+				// Wait a minimun size for elite set
 				if (willRunIntensification && eliteSet.size() >= 5) {
-					Solution prS = PathRelinking.run(sl, chooseEliteS(sl), Direction.BACKWORD);
+					Solution prS = new PathRelinking().run(sl, chooseEliteS(sl), Direction.BACKWORD);
 					sl = prS;
 					Console.log("PR Intensification Solution: " + prS.getFo());
 				}
 
-				PathRelinking.updateAPoolOfSolutions(sl, eliteSet, MAX_ELITE);
+				new PathRelinking().updateAPoolOfSolutions(sl, eliteSet, MAX_ELITE);
 			}
 
 			// Update best solution
@@ -101,7 +101,7 @@ public class Grasp {
 		}
 
 		if (willRunPostOptimization && eliteSet.size() > 1) {
-			Solution prS = PathRelinking.runOnEliteSet(eliteSet, Direction.BACKWORD, MAX_ELITE);
+			Solution prS = new PathRelinking().runOnEliteSet(eliteSet, Direction.BACKWORD, MAX_ELITE);
 			bestS = prS;
 			Console.log("\n PR Post Solution: " + prS.getFo());
 		}
@@ -110,7 +110,7 @@ public class Grasp {
 		return bestS;
 	}
 
-	private static Solution greedyRandomizedConstruction() {
+	private Solution greedyRandomizedConstruction() {
 		double peso = 0;
 		int j;
 		int restrictSize;
