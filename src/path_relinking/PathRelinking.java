@@ -3,6 +3,7 @@ package path_relinking;
 import java.util.ArrayList;
 import knapsack.Instance;
 import knapsack.Solution;
+import utils.Console;
 
 public class PathRelinking {
 	// Controllers
@@ -41,7 +42,7 @@ public class PathRelinking {
 		while (symmetricDifference.size() != 0) {
 
 			int bestMove = -1;
-			int bestMoveIndex = -1;
+			int simDifMoveIndex = -1;
 			double bestMoveFo = -Double.MAX_VALUE;
 
 			// Calculate best move
@@ -57,7 +58,7 @@ public class PathRelinking {
 				if (currentFo > bestMoveFo) {
 					bestMove = currentMove;
 					bestMoveFo = currentFo;
-					bestMoveIndex = i;
+					simDifMoveIndex = i;
 				}
 
 				// undo current move
@@ -65,7 +66,7 @@ public class PathRelinking {
 			}
 
 			// Remove best move from symmetricDifference
-			symmetricDifference.remove(bestMoveIndex);
+			symmetricDifference.remove(simDifMoveIndex);
 
 			// Apply it on the currentS
 			currentS.changeBit(bestMove);
@@ -108,6 +109,8 @@ public class PathRelinking {
 			}
 
 			// if we got a new best solution
+			//TODO index out of range
+			Console.log("Next pool size " + nextPool.size());
 			if (nextPool.get(0).getFo() > currentPool.get(0).getFo()) {
 				// Current pool is now the next one
 				currentPool = nextPool;
@@ -124,6 +127,11 @@ public class PathRelinking {
 	public static void updateAPoolOfSolutions(Solution s, ArrayList<Solution> pool, int maxSize) {
 		// If its not full just put s in there
 		if (pool.size() <= maxSize) {
+
+			if(isThereEqualSolution(s, pool)){
+				return;
+			}
+
 			pool.add(s);
 		} else {
 			int smallerSimDif = Integer.MAX_VALUE;
@@ -134,7 +142,7 @@ public class PathRelinking {
 			for (int i = 0; i < pool.size(); i++) {
 				Solution eliteS = pool.get(i);
 
-				if (instance.calculateFo(s) >= instance.calculateFo(eliteS)) {
+				if (instance.calculateFo(s) > instance.calculateFo(eliteS)) {
 					int simDif = eliteS.symmetricDifference(s).size();
 
 					if (simDif < smallerSimDif) {
@@ -146,11 +154,35 @@ public class PathRelinking {
 
 			}
 
+			if(isThereEqualSolution(s, pool)){
+				return;
+			}
+
 			if (willReplace)
 				pool.set(smallerSimDifIndex, s);
 		}
 
 		// Sort elite set in descending order
 		Solution.sortArrayOfSolutions(pool, true);
+
+		//printPool(pool);
+	}
+
+	public static boolean isThereEqualSolution(Solution s, ArrayList<Solution> pool){
+		for(Solution poolS : pool){
+			if(Double.compare(instance.calculateFo(s), instance.calculateFo(poolS)) == 0){
+				//Console.log("OF IS EQUAK " + s.getFo() + " != " + poolS.getFo());
+				return true;
+			}
+		}
+		//Console.log("THE IS NO EQUAL OF FOR "  + s.getFo());
+		return false;
+	}
+
+	public static void printPool(ArrayList<Solution> pool){
+		Console.log("######## NEW POOL ###########");
+		for(Solution s : pool){
+			Console.log(instance.calculateFo(s));
+		}
 	}
 }

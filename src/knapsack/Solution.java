@@ -3,7 +3,6 @@ package knapsack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import utils.Console;
 
 public class Solution {
 	public Solution() {
@@ -25,13 +24,14 @@ public class Solution {
 	// Calculate symmetric difference: moves to reach target from initial solution
 	public ArrayList<Integer> symmetricDifference(Solution s2) {
 		ArrayList<Integer> symmetricDifference = new ArrayList<Integer>();
+
 		for (int i = 0; i < s.size(); i++) {
 			if (s.get(i) == s2.getIndex(i))
 				continue;
 			else
 				symmetricDifference.add(i);
 		}
-		Console.log("SIMETRIC DIF " + symmetricDifference);
+
 		return symmetricDifference;
 	}
 

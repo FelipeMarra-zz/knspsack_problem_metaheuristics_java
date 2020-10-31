@@ -8,8 +8,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import utils.Console;
 
-
-
 public class Instance {
 	// ###Singleton:
 	private static Instance instance;
@@ -38,9 +36,26 @@ public class Instance {
 		return false;
 	}
 
-	public void read() {
-		Console.log("Type the path: ");
-		String path = Console.readString();
+	public void read(String path) {
+		if (path == null) {
+			Console.log("Type the path: ");
+			path = Console.readString();
+		}
+
+		if (iter_max == 0) {
+			instance.setIterMax();
+		}
+
+		if (alfa == 0) {
+			instance.setAlfa();
+		}
+
+		//Reset data
+		s = new Solution();
+		s_star = new Solution();
+		w = new ArrayList<Double>();
+		p = new ArrayList<Double>();
+
 		try {
 			FileReader file = new FileReader(path);
 			BufferedReader readFile = new BufferedReader(file);
@@ -83,9 +98,9 @@ public class Instance {
 
 			Console.log("n: " + n);
 			Console.log("b: " + b);
-			Console.log("s: " + s.getSolution());
-			Console.log("w: " + w);
-			Console.log("p: " + p);
+			// Console.log("s: " + s.getSolution());
+			// Console.log("w: " + w);
+			// Console.log("p: " + p);
 
 			// close file and reset best fo
 			file.close();

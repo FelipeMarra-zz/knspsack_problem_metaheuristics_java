@@ -12,7 +12,7 @@ import vnd.VND;
 
 public class Grasp {
 	// Controllers
-	final Instance instance = Instance.getInstance();
+	final static Instance instance = Instance.getInstance();
 
 	// With Path Relinking
 	public enum WithPR {
@@ -25,12 +25,12 @@ public class Grasp {
 		}
 	}
 
-	private int MAX_ELITE;
+	private static int MAX_ELITE;
 
-	private ArrayList<Solution> eliteSet = new ArrayList<Solution>();
+	private static ArrayList<Solution> eliteSet = new ArrayList<Solution>();
 
 	// Choose an elite solution to go into path relinking with the localOptimum
-	private Solution chooseEliteS(Solution localOptimum) {
+	private static Solution chooseEliteS(Solution localOptimum) {
 		if (eliteSet.size() == 0) {
 			return localOptimum;
 		}
@@ -46,7 +46,7 @@ public class Grasp {
 	 * 
 	 * @return the best [Solution] found
 	 */
-	public Solution run(Solution s, WithPR pathRelinking) {
+	public static Solution run(Solution s, WithPR pathRelinking) {
 		if (instance.instanceIsNull()) {
 			return null;
 		}
@@ -69,7 +69,7 @@ public class Grasp {
 
 		// Till stopping criteria (max of iterations)
 		for (int i = 0; i < instance.iter_max; i++) {
-			Console.log("\n #######Iteration #########" + i);
+			Console.log("\n #######Iteration " + (i+1) + "#########");
 			// Build partially greedy solution
 			sl = greedyRandomizedConstruction();
 			Console.log("Built Solution: " + instance.calculateFo(sl));
@@ -81,7 +81,8 @@ public class Grasp {
 
 			// If we will have path relinking
 			if (willRunPathRelinking) {
-				if (willRunIntensification) {
+				//Wait a minimun size for elite set
+				if (willRunIntensification && eliteSet.size() >= 5) {
 					Solution prS = PathRelinking.run(sl, chooseEliteS(sl), Direction.BACKWORD);
 					sl = prS;
 					Console.log("PR Intensification Solution: " + prS.getFo());
@@ -109,7 +110,7 @@ public class Grasp {
 		return bestS;
 	}
 
-	private Solution greedyRandomizedConstruction() {
+	private static Solution greedyRandomizedConstruction() {
 		double peso = 0;
 		int j;
 		int restrictSize;

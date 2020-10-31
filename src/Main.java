@@ -3,6 +3,7 @@ import grasp.Grasp;
 import grasp.Grasp.WithPR;
 import knapsack.Instance;
 import knapsack.Solution;
+import test.GraspVsGraspPr.GraspVsGraspPr;
 import utils.Console;
 import vnd.VND;
 
@@ -13,10 +14,6 @@ public class Main {
 
 		// Welcome
 		Console.log("Welcome");
-		Console.log("Before any algorithm you need to provide an instance");
-		instance.read();
-		instance.setIterMax();
-		instance.setAlfa();
 
 		// Main menu
 		int choice = 0;
@@ -28,6 +25,7 @@ public class Main {
 			Console.log("4 - Run Grasp");
 			Console.log("5 - Run VND");
 			Console.log("6 - Print S_Star");
+			Console.log("7 - Run Tests");
 			Console.log("Make a choice: ");
 			choice = Console.readInt();
 			switch (choice) {
@@ -35,7 +33,7 @@ public class Main {
 					System.exit(0);
 					break;
 				case 1:
-					instance.read();
+					instance.read(null);
 					break;
 				case 2:
 					instance.setIterMax();
@@ -44,7 +42,7 @@ public class Main {
 					instance.setAlfa();
 					break;
 				case 4:
-					Solution graspS = new Grasp().run(instance.getS(), WithPR.BOTH);
+					Solution graspS = Grasp.run(instance.getS(), WithPR.BOTH);
 					instance.setS(graspS);
 					break;
 				case 5:
@@ -55,6 +53,25 @@ public class Main {
 					Console.log(instance.s_star.getSolution());
 					Console.log("FO: " + instance.s_star.getFo());
 					break;
+				case 7:
+					testsMenu();
+					break;
+			}
+		} while (choice != 0);
+	}
+
+	private static void testsMenu(){
+		int choice = 0;
+		do{
+			Console.log("0 - close");
+			Console.log("1 - Grasp Vs Grasp-Pr");
+			choice = Console.readInt();
+			switch (choice) {
+				case 0:
+					return;
+				case 1:
+				GraspVsGraspPr.run();
+				break;
 			}
 		} while (choice != 0);
 	}
