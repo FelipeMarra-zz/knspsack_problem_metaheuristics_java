@@ -1,2 +1,2 @@
 # knspsack_problem_metaheuristics_java
-Project made using eclipse as ide
+A lot of metaheuristics implementations to solve the classic knapsack problem 
